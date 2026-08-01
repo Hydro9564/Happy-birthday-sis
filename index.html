@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Happy Birthday, Sister! ✨</title>
+    <!-- Three.js 3D WebGL Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Confetti Particle Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #ff4757;
-            --primary-glow: rgba(255, 71, 87, 0.4);
-            --accent: #ffa502;
-            --bg-dark: #09090e;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --ultron-blue: #00f0ff;
+            --ultron-glow: rgba(0, 240, 255, 0.5);
+            --ultron-dark: #0052d4;
+            --bg-dark: #050811;
+            --glass-bg: rgba(10, 20, 38, 0.4);
+            --glass-border: rgba(0, 240, 255, 0.2);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -31,14 +34,14 @@
             position: relative;
         }
 
-        /* Fullscreen Interactive Canvas */
-        #bg-canvas {
+        /* Fullscreen WebGL 3D Ultron Background & Interactive Canvas */
+        #ultron-3d-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 0;
+            z-index: 1;
             pointer-events: none;
         }
 
@@ -58,20 +61,20 @@
         .envelope {
             width: 140px;
             height: 140px;
-            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            background: linear-gradient(135deg, #0052d4, #00f0ff);
             border-radius: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 3.5rem;
             margin: 0 auto 20px;
-            box-shadow: 0 15px 35px var(--primary-glow), inset 0 0 15px rgba(255,255,255,0.3);
-            animation: floatPulse 2s infinite ease-in-out;
+            box-shadow: 0 15px 35px var(--ultron-glow), inset 0 0 15px rgba(255,255,255,0.4);
+            animation: ultronPulse 2s infinite ease-in-out;
         }
 
-        @keyframes floatPulse {
-            0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 15px 35px var(--primary-glow); }
-            50% { transform: translateY(-10px) scale(1.03); box-shadow: 0 25px 45px rgba(255, 71, 87, 0.6); }
+        @keyframes ultronPulse {
+            0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 15px 35px var(--ultron-glow); }
+            50% { transform: translateY(-10px) scale(1.05); box-shadow: 0 25px 50px rgba(0, 240, 255, 0.8); }
         }
 
         .tap-hint {
@@ -79,7 +82,7 @@
             font-weight: 600;
             letter-spacing: 2px;
             text-transform: uppercase;
-            background: linear-gradient(90deg, #ff6b81, #ffa502, #ff6b81);
+            background: linear-gradient(90deg, #00f0ff, #70a1ff, #00f0ff);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -90,7 +93,7 @@
             to { background-position: 200% center; }
         }
 
-        /* Main Glass Card (Hidden initially) */
+        /* Main Glass Card */
         .card {
             display: none;
             background: var(--glass-bg);
@@ -101,7 +104,7 @@
             padding: 32px 24px;
             max-width: 480px;
             width: 100%;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 240, 255, 0.15);
             z-index: 5;
             text-align: center;
             opacity: 0;
@@ -118,29 +121,30 @@
         .badge {
             display: inline-block;
             padding: 6px 16px;
-            background: rgba(255, 71, 87, 0.15);
-            border: 1px solid rgba(255, 71, 87, 0.3);
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
             border-radius: 50px;
             font-size: 0.8rem;
             font-weight: 600;
-            color: #ff6b81;
+            color: var(--ultron-blue);
             text-transform: uppercase;
             letter-spacing: 1.5px;
             margin-bottom: 16px;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
         }
 
         h1 {
             font-family: 'Playfair Display', serif;
             font-size: 2.2rem;
             font-weight: 600;
-            background: linear-gradient(135deg, #ffffff 30%, #a0a0b2 100%);
+            background: linear-gradient(135deg, #ffffff 40%, var(--ultron-blue) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 6px;
         }
 
         .subtitle {
-            color: #8a8a9e;
+            color: #70a1ff;
             font-size: 0.95rem;
             margin-bottom: 24px;
         }
@@ -149,20 +153,20 @@
         .letter-content {
             text-align: left;
             line-height: 1.75;
-            color: #dcdce6;
+            color: #d1e5ff;
             font-size: 0.95rem;
             min-height: 240px;
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(2, 10, 25, 0.5);
             padding: 20px;
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.15);
             margin-bottom: 24px;
             position: relative;
         }
 
         .letter-content::after {
             content: '|';
-            color: var(--primary);
+            color: var(--ultron-blue);
             animation: blink 0.8s infinite;
         }
 
@@ -198,9 +202,11 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), #ff6b81);
+            background: linear-gradient(135deg, var(--ultron-dark), var(--ultron-blue));
             border: none;
-            box-shadow: 0 10px 25px var(--primary-glow);
+            box-shadow: 0 10px 25px var(--ultron-glow);
+            color: #000;
+            font-weight: 700;
         }
 
         .btn:active {
@@ -210,17 +216,18 @@
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
+    <!-- WebGL 3D Canvas for Ultron AI Sphere -->
+    <canvas id="ultron-3d-canvas"></canvas>
 
     <!-- Tap to Open Envelope Screen -->
     <div class="envelope-wrapper" id="envelope-screen" onclick="openSurprise()">
         <div class="envelope">🎁</div>
-        <div class="tap-hint">Tap to Open Surprise</div>
+        <div class="tap-hint">Tap to Activate AI Form</div>
     </div>
 
     <!-- Main Card Screen -->
     <div class="card" id="main-card">
-        <span class="badge">Special Greeting</span>
+        <span class="badge">🤖 Ultron Protocol Activated</span>
         <h1>Happy Birthday! 🎉</h1>
         <div class="subtitle">To my sister from another mother</div>
 
@@ -236,61 +243,110 @@
         </div>
     </div>
 
-    <!-- Upbeat Birthday Vibes Background Audio -->
+    <!-- Upbeat Birthday Audio -->
     <audio id="bg-music" loop preload="auto">
         <source src="https://cdn.pixabay.com/download/audio/2022/10/14/audio_9939a73e6b.mp3?filename=happy-birthday-125433.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        // Interactive Canvas Particle Engine
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
+        // --- THREE.JS ULTRON 3D BLUE AI FORM DIAGRAM ---
+        const canvas = document.getElementById('ultron-3d-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.vx = (Math.random() - 0.5) * 0.3;
-                this.vy = (Math.random() - 0.5) * 0.3;
-                this.alpha = Math.random() * 0.5 + 0.2;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
-                    this.reset();
-                }
-            }
-            draw() {
-                ctx.fillStyle = `rgba(255, 107, 129, ${this.alpha})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+        // 1. Outer Geodesic Ultron Shield Mesh
+        const outerGeo = new THREE.IcosahedronGeometry(2.2, 2);
+        const outerMat = new THREE.MeshBasicMaterial({
+            color: 0x00f0ff,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.25
+        });
+        const outerSphere = new THREE.Mesh(outerGeo, outerMat);
+        scene.add(outerSphere);
+
+        // 2. Inner Neural Network Matrix Nodes (Particles)
+        const particleCount = 220;
+        const particleGeo = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            const u = Math.random();
+            const v = Math.random();
+            const theta = u * 2.0 * Math.PI;
+            const phi = Math.acos(2.0 * v - 1.0);
+            const r = 1.6 + Math.random() * 0.4;
+
+            positions[i] = r * Math.sin(phi) * Math.cos(theta);
+            positions[i + 1] = r * Math.sin(phi) * Math.sin(theta);
+            positions[i + 2] = r * Math.cos(phi);
         }
 
-        for (let i = 0; i < 60; i++) particles.push(new Particle());
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particleMat = new THREE.PointsMaterial({
+            color: 0x00f0ff,
+            size: 0.05,
+            transparent: true,
+            opacity: 0.9
+        });
+        const particleSystem = new THREE.Points(particleGeo, particleMat);
+        scene.add(particleSystem);
 
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateParticles);
+        // 3. Glowing Inner Core
+        const coreGeo = new THREE.IcosahedronGeometry(0.8, 1);
+        const coreMat = new THREE.MeshBasicMaterial({
+            color: 0x0052d4,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.6
+        });
+        const innerCore = new THREE.Mesh(coreGeo, coreMat);
+        scene.add(innerCore);
+
+        // 4. Cyan Energy Beams / Lines
+        const lineMat = new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.15 });
+        const lineGeo = new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(1.8, 1));
+        const lines = new THREE.LineSegments(lineGeo, lineMat);
+        scene.add(lines);
+
+        camera.position.z = 4.2;
+
+        // Render Loop with Dynamic Rotation & Pulse
+        let clock = new THREE.Clock();
+
+        function animate3DUltron() {
+            requestAnimationFrame(animate3DUltron);
+            const elapsedTime = clock.getElapsedTime();
+
+            // Rotations matching movie AI hologram movement
+            outerSphere.rotation.y = elapsedTime * 0.15;
+            outerSphere.rotation.x = elapsedTime * 0.08;
+
+            particleSystem.rotation.y = -elapsedTime * 0.2;
+            innerCore.rotation.y = elapsedTime * 0.3;
+            innerCore.rotation.z = elapsedTime * 0.1;
+
+            lines.rotation.y = elapsedTime * 0.1;
+
+            // Core Pulse
+            const scale = 1 + Math.sin(elapsedTime * 3) * 0.08;
+            innerCore.scale.set(scale, scale, scale);
+
+            renderer.render(scene, camera);
         }
-        animateParticles();
+        animate3DUltron();
 
-        // Message Script
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- PAGE INTERACTIVE SCRIPT ---
         const textMessage = `Dearest Sister,\n\nThey say that blood makes you related, but loyalty, shared laughter, and genuine care make you family. You might be my sister from another mother, but in every single way that truly matters, you are as real a sister as anyone could ever have.\n\nI don’t need childhood photo albums or shared last names to prove how much you mean to me. The way you listen when things get heavy, the effortless joy in our random conversations, and the quiet comfort of knowing you’re always in my corner—that is real family.\n\nOn your birthday, I want you to know how deeply appreciated and valued you are. Keep shining, stay your incredible self, and remember that no matter where life takes us, you will always have a brother who stands by you. ✨`;
 
         let charIndex = 0;
@@ -298,18 +354,16 @@
         const audio = document.getElementById("bg-music");
 
         function openSurprise() {
-            // Hide envelope screen
             document.getElementById("envelope-screen").style.display = "none";
-            
-            // Show main card with animation
             const card = document.getElementById("main-card");
             card.classList.add("active");
 
-            // Play music & trigger confetti
+            // Shift camera position on open for dramatic entry
+            camera.position.z = 3.8;
+
             audio.play().catch(() => {});
             triggerCelebration();
 
-            // Start Typing
             setTimeout(typeEffect, 400);
         }
 
@@ -325,7 +379,6 @@
         }
 
         function triggerCelebration() {
-            // Multi-stage fireworks bursts
             const count = 200;
             const defaults = { origin: { y: 0.7 } };
 
@@ -335,10 +388,10 @@
                 }));
             }
 
-            fire(0.25, { spread: 26, startVelocity: 55, colors: ['#ff4757', '#ffa502'] });
-            fire(0.2, { spread: 60, colors: ['#ffffff', '#ff6b81'] });
+            fire(0.25, { spread: 26, startVelocity: 55, colors: ['#00f0ff', '#0052d4'] });
+            fire(0.2, { spread: 60, colors: ['#ffffff', '#70a1ff'] });
             fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, colors: ['#ffeaa7'] });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, colors: ['#00f0ff'] });
         }
 
         let isMuted = false;
