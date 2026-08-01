@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, Sister!</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #0f0f15;
+            color: #f1f1f1;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .card {
+            background: #181824;
+            border: 1px solid #2a2a3d;
+            border-radius: 20px;
+            padding: 30px 24px;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 2;
+        }
+        h1 {
+            color: #ff6b81;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #a0a0b2;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+        .letter-content p {
+            line-height: 1.7;
+            color: #d1d1e0;
+            font-size: 0.98rem;
+            margin-bottom: 16px;
+        }
+        .letter-content p:last-child {
+            margin-bottom: 0;
+        }
+        .highlight {
+            color: #ff6b81;
+            font-weight: 600;
+        }
+        .footer {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff6b81;
+        }
+        /* Floating background hearts */
+        .bg-heart {
+            position: fixed;
+            color: rgba(255, 107, 129, 0.15);
+            font-size: 2rem;
+            animation: float 6s infinite ease-in-out;
+            z-index: 1;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-heart" style="left: 10%; animation-delay: 0s;">❤️</div>
+    <div class="bg-heart" style="left: 40%; animation-delay: 2s;">✨</div>
+    <div class="bg-heart" style="left: 70%; animation-delay: 4s;">💖</div>
+
+    <div class="card">
+        <h1>Happy Birthday! 🎉</h1>
+        <div class="subtitle">To my sister from another mother</div>
+        
+        <div class="letter-content">
+            <p><span class="highlight">Dearest Sister,</span></p>
+            <p>They say that blood makes you related, but loyalty, shared laughter, and genuine care make you family. You might be my sister from another mother, but in every single way that truly matters, you are as real a sister as anyone could ever have. Life brought us together down different paths, but finding a bond as pure, constant, and unbreakable as ours is easily one of the greatest gifts I have ever received.</p>
+            <p>I don’t need childhood photo albums or shared last names to prove how much you mean to me. The way you listen when things get heavy, the effortless joy in our random conversations, and the quiet comfort of knowing you’re always in my corner—that is real family. You have been a steady source of warmth, light, and strength, and I am endlessly grateful for your presence in my life.</p>
+            <p>On your birthday, I want you to know how deeply appreciated and valued you are. I hope this year brings you all the peace, happiness, success, and pure magic that you so effortlessly give to the people around you. Keep shining, stay your incredible self, and remember that no matter where life takes us, you will always have a brother who stands by you, roots for you, and holds a place for you that nobody else could ever fill.</p>
+        </div>
+
+        <div class="footer">
+            Always & Forever ✨
+        </div>
+    </div>
+</body>
+</html>
