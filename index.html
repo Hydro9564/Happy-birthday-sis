@@ -3,274 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Happy Birthday, Sister! ✨</title>
-    <!-- Three.js 3D WebGL Library -->
+    <title>Ultron AI Interface - Neural Network 3D</title>
+    <!-- Three.js WebGL Engine -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Confetti Particle Library -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --ultron-blue: #00f0ff;
-            --ultron-glow: rgba(0, 240, 255, 0.5);
-            --ultron-dark: #0052d4;
-            --bg-dark: #050811;
-            --glass-bg: rgba(10, 20, 38, 0.4);
-            --glass-border: rgba(0, 240, 255, 0.2);
+            --cyan: #00f0ff;
+            --cyan-glow: rgba(0, 240, 255, 0.4);
+            --ultron-blue: #0052d4;
+            --bg-dark: #03060e;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
+
         body {
             background-color: var(--bg-dark);
-            color: #ffffff;
-            font-family: 'Outfit', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-            overflow-x: hidden;
+            color: var(--cyan);
+            font-family: 'Share Tech Mono', monospace;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
             position: relative;
         }
 
-        /* Fullscreen WebGL 3D Ultron Background & Interactive Canvas */
-        #ultron-3d-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
+        /* 3D WebGL Canvas */
+        #canvas-container {
             width: 100vw;
             height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
             z-index: 1;
+        }
+
+        /* HUD Overlay Header */
+        .hud-header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
             pointer-events: none;
         }
 
-        /* Initial Interactive Envelope Container */
-        .envelope-wrapper {
-            position: relative;
-            z-index: 10;
-            cursor: pointer;
-            text-align: center;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .envelope-wrapper:active {
-            transform: scale(0.95);
-        }
-
-        .envelope {
-            width: 140px;
-            height: 140px;
-            background: linear-gradient(135deg, #0052d4, #00f0ff);
-            border-radius: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3.5rem;
-            margin: 0 auto 20px;
-            box-shadow: 0 15px 35px var(--ultron-glow), inset 0 0 15px rgba(255,255,255,0.4);
-            animation: ultronPulse 2s infinite ease-in-out;
-        }
-
-        @keyframes ultronPulse {
-            0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 15px 35px var(--ultron-glow); }
-            50% { transform: translateY(-10px) scale(1.05); box-shadow: 0 25px 50px rgba(0, 240, 255, 0.8); }
-        }
-
-        .tap-hint {
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 2px;
+        .hud-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            background: linear-gradient(90deg, #00f0ff, #70a1ff, #00f0ff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine 3s linear infinite;
+            text-shadow: 0 0 12px var(--cyan);
         }
 
-        @keyframes shine {
-            to { background-position: 200% center; }
-        }
-
-        /* Main Glass Card */
-        .card {
-            display: none;
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            padding: 32px 24px;
-            max-width: 480px;
-            width: 100%;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 240, 255, 0.15);
-            z-index: 5;
-            text-align: center;
-            opacity: 0;
-            transform: scale(0.9) translateY(30px);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .card.active {
-            display: block;
-            opacity: 1;
-            transform: scale(1) translateY(0);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 6px 16px;
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 50px;
+        .hud-header p {
             font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--ultron-blue);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 16px;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+            color: rgba(0, 240, 255, 0.7);
+            letter-spacing: 1px;
+            margin-top: 4px;
         }
 
-        h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #ffffff 40%, var(--ultron-blue) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 6px;
+        /* System Telemetry HUD (Top Right) */
+        .hud-telemetry {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            text-align: right;
+            font-size: 0.75rem;
+            color: rgba(0, 240, 255, 0.7);
+            line-height: 1.5;
+            pointer-events: none;
         }
 
-        .subtitle {
-            color: #70a1ff;
-            font-size: 0.95rem;
-            margin-bottom: 24px;
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--cyan);
+            animation: pulse 1.5s infinite ease-in-out;
+            margin-right: 6px;
         }
 
-        /* Letter Container */
-        .letter-content {
-            text-align: left;
-            line-height: 1.75;
-            color: #d1e5ff;
-            font-size: 0.95rem;
-            min-height: 240px;
-            background: rgba(2, 10, 25, 0.5);
-            padding: 20px;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 240, 255, 0.15);
-            margin-bottom: 24px;
-            position: relative;
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
         }
 
-        .letter-content::after {
-            content: '|';
-            color: var(--ultron-blue);
-            animation: blink 0.8s infinite;
-        }
-
-        .letter-content.done::after {
-            display: none;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* Controller Buttons */
-        .btn-group {
+        /* Control Panel (Bottom) */
+        .hud-controls {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
             display: flex;
             gap: 12px;
-            justify-content: center;
+            background: rgba(3, 10, 25, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            padding: 10px 18px;
+            border-radius: 50px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
         }
 
         .btn {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: #fff;
-            padding: 12px 24px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border-radius: 50px;
+            background: transparent;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: var(--cyan);
+            font-family: 'Share Tech Mono', monospace;
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            border-radius: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            transition: all 0.25s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--ultron-dark), var(--ultron-blue));
-            border: none;
-            box-shadow: 0 10px 25px var(--ultron-glow);
-            color: #000;
-            font-weight: 700;
+        .btn:hover, .btn.active {
+            background: rgba(0, 240, 255, 0.2);
+            border-color: var(--cyan);
+            box-shadow: 0 0 12px var(--cyan-glow);
         }
 
         .btn:active {
             transform: scale(0.95);
         }
+
+        /* Vignette and Grid Overlay */
+        .overlay-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 2;
+            pointer-events: none;
+            background: radial-gradient(circle, transparent 40%, rgba(3, 6, 14, 0.85) 90%),
+                        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- WebGL 3D Canvas for Ultron AI Sphere -->
-    <canvas id="ultron-3d-canvas"></canvas>
+    <div class="overlay-grid"></div>
 
-    <!-- Tap to Open Envelope Screen -->
-    <div class="envelope-wrapper" id="envelope-screen" onclick="openSurprise()">
-        <div class="envelope">🎁</div>
-        <div class="tap-hint">Tap to Activate AI Form</div>
+    <div id="canvas-container"></div>
+
+    <div class="hud-header">
+        <h1>Ultron Matrix</h1>
+        <p>Neural Consciousness // Core Model v0.9</p>
     </div>
 
-    <!-- Main Card Screen -->
-    <div class="card" id="main-card">
-        <span class="badge">🤖 Ultron Protocol Activated</span>
-        <h1>Happy Birthday! 🎉</h1>
-        <div class="subtitle">To my sister from another mother</div>
-
-        <div class="letter-content" id="typed-text"></div>
-
-        <div class="btn-group">
-            <button class="btn btn-primary" onclick="triggerCelebration()">
-                ✨ Celebrate More
-            </button>
-            <button class="btn" onclick="toggleAudio()" id="audio-btn">
-                🎵 Mute
-            </button>
-        </div>
+    <div class="hud-telemetry">
+        <div><span class="status-dot"></span>SYSTEM: ONLINE</div>
+        <div>NODES: 420 ACTIVE</div>
+        <div>SYNC RATE: 99.84%</div>
     </div>
 
-    <!-- Upbeat Birthday Audio -->
-    <audio id="bg-music" loop preload="auto">
-        <source src="https://cdn.pixabay.com/download/audio/2022/10/14/audio_9939a73e6b.mp3?filename=happy-birthday-125433.mp3" type="audio/mpeg">
-    </audio>
+    <div class="hud-controls">
+        <button class="btn" onclick="toggleRotation()" id="btn-rotate">Pause Motion</button>
+        <button class="btn" onclick="toggleCorePulse()" id="btn-pulse">Core Surge</button>
+        <button class="btn" onclick="toggleWireframe()" id="btn-wire">Wireframe</button>
+    </div>
 
     <script>
-        // --- THREE.JS ULTRON 3D BLUE AI FORM DIAGRAM ---
-        const canvas = document.getElementById('ultron-3d-canvas');
+        // --- THREE.JS ENGINE SETUP ---
+        const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
 
-        // 1. Outer Geodesic Ultron Shield Mesh
-        const outerGeo = new THREE.IcosahedronGeometry(2.2, 2);
+        const ultronGroup = new THREE.Group();
+        scene.add(ultronGroup);
+
+        // 1. Outer Geodesic Hologram Shell
+        const outerGeo = new THREE.IcosahedronGeometry(2.4, 2);
         const outerMat = new THREE.MeshBasicMaterial({
             color: 0x00f0ff,
             wireframe: true,
             transparent: true,
             opacity: 0.25
         });
-        const outerSphere = new THREE.Mesh(outerGeo, outerMat);
-        scene.add(outerSphere);
+        const outerShell = new THREE.Mesh(outerGeo, outerMat);
+        ultronGroup.add(outerShell);
 
-        // 2. Inner Neural Network Matrix Nodes (Particles)
-        const particleCount = 220;
+        // 2. Middle Dense Connectivity Lattice
+        const midGeo = new THREE.IcosahedronGeometry(1.7, 3);
+        const midMat = new THREE.MeshBasicMaterial({
+            color: 0x0088ff,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.18
+        });
+        const midShell = new THREE.Mesh(midGeo, midMat);
+        ultronGroup.add(midShell);
+
+        // 3. Neural Node Particle Cloud
+        const particleCount = 380;
         const particleGeo = new THREE.BufferGeometry();
         const positions = new Float32Array(particleCount * 3);
 
@@ -279,7 +218,7 @@
             const v = Math.random();
             const theta = u * 2.0 * Math.PI;
             const phi = Math.acos(2.0 * v - 1.0);
-            const r = 1.6 + Math.random() * 0.4;
+            const r = 1.3 + Math.random() * 1.1;
 
             positions[i] = r * Math.sin(phi) * Math.cos(theta);
             positions[i + 1] = r * Math.sin(phi) * Math.sin(theta);
@@ -291,121 +230,126 @@
             color: 0x00f0ff,
             size: 0.05,
             transparent: true,
-            opacity: 0.9
+            opacity: 0.85
         });
         const particleSystem = new THREE.Points(particleGeo, particleMat);
-        scene.add(particleSystem);
+        ultronGroup.add(particleSystem);
 
-        // 3. Glowing Inner Core
-        const coreGeo = new THREE.IcosahedronGeometry(0.8, 1);
+        // 4. Central High-Density Core
+        const coreGeo = new THREE.IcosahedronGeometry(0.85, 2);
         const coreMat = new THREE.MeshBasicMaterial({
             color: 0x0052d4,
             wireframe: true,
             transparent: true,
-            opacity: 0.6
+            opacity: 0.65
         });
         const innerCore = new THREE.Mesh(coreGeo, coreMat);
-        scene.add(innerCore);
+        ultronGroup.add(innerCore);
 
-        // 4. Cyan Energy Beams / Lines
-        const lineMat = new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.15 });
-        const lineGeo = new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(1.8, 1));
-        const lines = new THREE.LineSegments(lineGeo, lineMat);
-        scene.add(lines);
+        // 5. Inner Core Solid Kernel
+        const kernelGeo = new THREE.SphereGeometry(0.35, 16, 16);
+        const kernelMat = new THREE.MeshBasicMaterial({
+            color: 0x00f0ff,
+            transparent: true,
+            opacity: 0.9
+        });
+        const kernel = new THREE.Mesh(kernelGeo, kernelMat);
+        ultronGroup.add(kernel);
 
-        camera.position.z = 4.2;
+        camera.position.z = 5.2;
 
-        // Render Loop with Dynamic Rotation & Pulse
+        // --- INTERACTIVE TOUCH/MOUSE CONTROL ---
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        function onPointerDown(e) {
+            isDragging = true;
+            previousMousePosition = { x: e.clientX || e.touches[0].clientX, y: e.clientY || e.touches[0].clientY };
+        }
+
+        function onPointerMove(e) {
+            if (!isDragging) return;
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+            const deltaX = clientX - previousMousePosition.x;
+            const deltaY = clientY - previousMousePosition.y;
+
+            ultronGroup.rotation.y += deltaX * 0.005;
+            ultronGroup.rotation.x += deltaY * 0.005;
+
+            previousMousePosition = { x: clientX, y: clientY };
+        }
+
+        function onPointerUp() { isDragging = false; }
+
+        window.addEventListener('mousedown', onPointerDown);
+        window.addEventListener('mousemove', onPointerMove);
+        window.addEventListener('mouseup', onPointerUp);
+        window.addEventListener('touchstart', onPointerDown);
+        window.addEventListener('touchmove', onPointerMove);
+        window.addEventListener('touchend', onPointerUp);
+
+        // --- ANIMATION LOOP ---
         let clock = new THREE.Clock();
+        let isRotating = true;
+        let surgeMode = false;
 
-        function animate3DUltron() {
-            requestAnimationFrame(animate3DUltron);
-            const elapsedTime = clock.getElapsedTime();
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getElapsedTime();
 
-            // Rotations matching movie AI hologram movement
-            outerSphere.rotation.y = elapsedTime * 0.15;
-            outerSphere.rotation.x = elapsedTime * 0.08;
+            if (isRotating && !isDragging) {
+                outerShell.rotation.y = delta * 0.12;
+                outerShell.rotation.x = delta * 0.06;
 
-            particleSystem.rotation.y = -elapsedTime * 0.2;
-            innerCore.rotation.y = elapsedTime * 0.3;
-            innerCore.rotation.z = elapsedTime * 0.1;
+                midShell.rotation.y = -delta * 0.18;
+                particleSystem.rotation.y = delta * 0.15;
+                particleSystem.rotation.z = -delta * 0.05;
 
-            lines.rotation.y = elapsedTime * 0.1;
+                innerCore.rotation.y = -delta * 0.3;
+                innerCore.rotation.x = delta * 0.15;
+            }
 
-            // Core Pulse
-            const scale = 1 + Math.sin(elapsedTime * 3) * 0.08;
-            innerCore.scale.set(scale, scale, scale);
+            // Core Pulse Dynamics
+            const speed = surgeMode ? 8 : 2.5;
+            const scaleAmount = surgeMode ? 0.22 : 0.08;
+            const coreScale = 1 + Math.sin(delta * speed) * scaleAmount;
+            
+            innerCore.scale.set(coreScale, coreScale, coreScale);
+            kernel.scale.set(coreScale * 0.8, coreScale * 0.8, coreScale * 0.8);
 
             renderer.render(scene, camera);
         }
-        animate3DUltron();
+        animate();
 
+        // --- HUD CONTROL FUNCTIONS ---
+        function toggleRotation() {
+            isRotating = !isRotating;
+            document.getElementById('btn-rotate').classList.toggle('active', !isRotating);
+            document.getElementById('btn-rotate').innerText = isRotating ? 'Pause Motion' : 'Resume Motion';
+        }
+
+        function toggleCorePulse() {
+            surgeMode = !surgeMode;
+            document.getElementById('btn-pulse').classList.toggle('active', surgeMode);
+            document.getElementById('btn-pulse').innerText = surgeMode ? 'Normal Core' : 'Core Surge';
+        }
+
+        function toggleWireframe() {
+            const isWire = outerShell.material.wireframe;
+            outerShell.material.wireframe = !isWire;
+            midShell.material.wireframe = !isWire;
+            innerCore.material.wireframe = !isWire;
+            document.getElementById('btn-wire').classList.toggle('active', !isWire);
+        }
+
+        // Window Resize Handler
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
-        // --- PAGE INTERACTIVE SCRIPT ---
-        const textMessage = `Dearest Sister,\n\nThey say that blood makes you related, but loyalty, shared laughter, and genuine care make you family. You might be my sister from another mother, but in every single way that truly matters, you are as real a sister as anyone could ever have.\n\nI don’t need childhood photo albums or shared last names to prove how much you mean to me. The way you listen when things get heavy, the effortless joy in our random conversations, and the quiet comfort of knowing you’re always in my corner—that is real family.\n\nOn your birthday, I want you to know how deeply appreciated and valued you are. Keep shining, stay your incredible self, and remember that no matter where life takes us, you will always have a brother who stands by you. ✨`;
-
-        let charIndex = 0;
-        const textContainer = document.getElementById("typed-text");
-        const audio = document.getElementById("bg-music");
-
-        function openSurprise() {
-            document.getElementById("envelope-screen").style.display = "none";
-            const card = document.getElementById("main-card");
-            card.classList.add("active");
-
-            // Shift camera position on open for dramatic entry
-            camera.position.z = 3.8;
-
-            audio.play().catch(() => {});
-            triggerCelebration();
-
-            setTimeout(typeEffect, 400);
-        }
-
-        function typeEffect() {
-            if (charIndex < textMessage.length) {
-                let char = textMessage.charAt(charIndex);
-                textContainer.innerHTML += char === '\n' ? '<br>' : char;
-                charIndex++;
-                setTimeout(typeEffect, 30);
-            } else {
-                textContainer.classList.add("done");
-            }
-        }
-
-        function triggerCelebration() {
-            const count = 200;
-            const defaults = { origin: { y: 0.7 } };
-
-            function fire(particleRatio, opts) {
-                confetti(Object.assign({}, defaults, opts, {
-                    particleCount: Math.floor(count * particleRatio)
-                }));
-            }
-
-            fire(0.25, { spread: 26, startVelocity: 55, colors: ['#00f0ff', '#0052d4'] });
-            fire(0.2, { spread: 60, colors: ['#ffffff', '#70a1ff'] });
-            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, colors: ['#00f0ff'] });
-        }
-
-        let isMuted = false;
-        function toggleAudio() {
-            if (isMuted) {
-                audio.play();
-                document.getElementById("audio-btn").innerText = "🎵 Mute";
-                isMuted = false;
-            } else {
-                audio.pause();
-                document.getElementById("audio-btn").innerText = "🔇 Unmute";
-                isMuted = true;
-            }
-        }
     </script>
 </body>
 </html>
