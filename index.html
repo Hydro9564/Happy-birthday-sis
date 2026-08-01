@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, Sister! ✨</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(135deg, #0d0d15 0%, #1a1a2e 50%, #16213e 100%);
+            color: #f1f1f1;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Glow & Floating Hearts */
+        .glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,107,129,0.2) 0%, rgba(0,0,0,0) 70%);
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism Card Design */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            padding: 35px 25px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            z-index: 2;
+            text-align: center;
+            animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #ff6b81, #ffa502);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #a0a0b2;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Typewriter Text Box */
+        .letter-content {
+            text-align: left;
+            line-height: 1.8;
+            color: #e0e0ec;
+            font-size: 0.98rem;
+            min-height: 280px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 25px;
+        }
+
+        /* Music Controller Button */
+        .music-btn {
+            background: linear-gradient(135deg, #ff6b81, #ff4757);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 107, 129, 0.4);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .music-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Floating background elements */
+        .floating-heart {
+            position: fixed;
+            color: rgba(255, 107, 129, 0.2);
+            font-size: 1.5rem;
+            animation: float 8s infinite linear;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow"></div>
+
+    <!-- Floating Background Hearts -->
+    <div class="floating-heart" style="left: 10%; animation-delay: 0s;">✨</div>
+    <div class="floating-heart" style="left: 30%; animation-delay: 2.5s;">💖</div>
+    <div class="floating-heart" style="left: 65%; animation-delay: 5s;">⭐</div>
+    <div class="floating-heart" style="left: 85%; animation-delay: 1s;">✨</div>
+
+    <div class="card">
+        <h1>Happy Birthday! 🎉</h1>
+        <div class="subtitle">To my sister from another mother</div>
+
+        <div class="letter-content" id="typed-text"></div>
+
+        <button class="music-btn" onclick="togglePlay()">
+            <span id="music-icon">🎵</span> <span id="btn-text">Play Music & Celebrations</span>
+        </button>
+    </div>
+
+    <!-- Free License royalty-free background ambient music -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=soft-ambient-111154.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Full Birthday Message Text
+        const fullMessage = `Dearest Sister,\n\nThey say that blood makes you related, but loyalty, shared laughter, and genuine care make you family. You might be my sister from another mother, but in every single way that truly matters, you are as real a sister as anyone could ever have.\n\nI don’t need childhood photo albums or shared last names to prove how much you mean to me. The way you listen when things get heavy, the effortless joy in our random conversations, and the quiet comfort of knowing you’re always in my corner—that is real family.\n\nOn your birthday, I want you to know how deeply appreciated and valued you are. Keep shining, stay your incredible self, and remember that no matter where life takes us, you will always have a brother who stands by you. ✨`;
+
+        let index = 0;
+        const speed = 35; // Typing speed in ms
+        const textContainer = document.getElementById("typed-text");
+
+        // Smooth Typewriter Animation
+        function typeWriter() {
+            if (index < fullMessage.length) {
+                let char = fullMessage.charAt(index);
+                textContainer.innerHTML += char === '\n' ? '<br>' : char;
+                index++;
+                setTimeout(typeWriter, speed);
+            }
+        }
+
+        // Start typing on load
+        window.onload = () => {
+            typeWriter();
+            triggerConfetti();
+        };
+
+        // Confetti Burst Animation
+        function triggerConfetti() {
+            confetti({
+                particleCount: 80,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff6b81', '#ffa502', '#70a1ff', '#ffffff']
+            });
+        }
+
+        // Audio Toggle and celebration trigger
+        const audio = document.getElementById("bg-music");
+        let isPlaying = false;
+
+        function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+                document.getElementById("music-icon").innerText = "🎵";
+                document.getElementById("btn-text").innerText = "Play Music";
+                isPlaying = false;
+            } else {
+                audio.play();
+                document.getElementById("music-icon").innerText = "⏸️";
+                document.getElementById("btn-text").innerText = "Pause Music";
+                isPlaying = true;
+                triggerConfetti(); // Trigger extra confetti when button is clicked
+            }
+        }
+    </script>
+</body>
+</html>
